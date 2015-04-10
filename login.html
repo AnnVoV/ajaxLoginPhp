@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <link href="index.less" rel="stylesheet" type="text/less" />
+    <script src="./node_modules/bootstrap/dist/js/jquery2.0.3.min.js"></script>
+</head>
+<body>
+    <div class="contaienr">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="page-header">
+                <h1>
+                    <span class="glyphicon glyphicon-tower"></span>
+                    Ajax Login Php
+                </h1>
+            </div>
+            <div id="message"></div>
+            <form>
+                <div class="form-group" id="name-group">
+                    <label for="name" class="control-label">用户名:</label>
+                    <input type="text" name="name" class="form-control" placeholder="请输入用户名"/>
+                    <span class="help-block" id="name-help"></span>
+                </div>
+                <div class="form-group" id="pass-group">
+                    <label for="pass" class="control-label">密码:</label>
+                    <input type="password" name="pass" class="form-control" placeholder="请输入用户名"/>
+                    <span class="help-block" id="pass-help"></span>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary">登 陆</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $('form').submit(function(){
+                var formData = {
+                    name:$('input[name="name"]').val(),
+                    pass:$('input[name="pass"]').val()
+                };
+
+                $.ajax({
+                    url:'process.php',
+                    type:'post',
+                    dataType:'json',
+                    data:formData,
+                    success:function(data){
+                        //假设全部在后台验证
+                        console.log(data);
+
+                        if(!data.success){
+                            //如果登陆失败
+                            if(data.errors.name){
+                                $('#name-group').addClass('has-error');
+                                $('#name-help').html(data.errors.name);
+                            }
+                            if(data.errors.pass){
+                                $('#pass-group').addClass('has-error');
+                                $('#pass-help').html(data.errors.pass);
+                            }
+                            $('#message').addClass('alert alert-danger').append(
+                                '<p>登陆失败!</p>'
+                            );
+                        }else{
+                            $('#message').addClass('alert alert-success').append(
+                                '<p>'+data.message+'</p>'
+                            );
+                        }
+                    },
+                    error:function(){
+                        console.log('error');
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+    <script src="less.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
